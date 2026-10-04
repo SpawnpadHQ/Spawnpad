@@ -9,6 +9,7 @@ import { sessions } from "../../external/schema.js";
 import { and, eq, gt, lte } from "drizzle-orm";
 import { createHash } from "node:crypto";
 import { addSessionSocket, closeSessionSockets } from "./session-sockets.js";
+import "./datatypes/whoami.js";
 
 type WebsocketResponse = {
     type: string;
