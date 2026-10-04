@@ -23,10 +23,13 @@ This is just the API, so you can't see much yet. If you're a developer, you can 
     );
 });
 
-app.listen({ port: Number(process.env.PORT) || 3000 }, (error) => {
-    if (error) {
-        console.error(error);
-        process.exit(1);
-    }
-    console.log(`Listening on port ${process.env.PORT || 3000}`);
-});
+app.listen(
+    { port: Number(process.env.PORT) || 3000, host: "0.0.0.0" },
+    (error) => {
+        if (error) {
+            console.error(error);
+            process.exit(1);
+        }
+        console.log(`Listening on port ${process.env.PORT || 3000}`);
+    },
+);
