@@ -1,5 +1,6 @@
 local HttpService = game:GetService("HttpService")
 local DataTypeLoader = require("./Waypoint/DataTypeLoader")
+local Config = require("./Waypoint/Config")
 local Waypoint = {}
 Waypoint.__index = Waypoint
 
@@ -10,10 +11,8 @@ local SPAWNPAD_WAYPOINT_INSECURE_EXISTS = pcall(function()
 	return HttpService:GetSecret("SPAWNPAD_WAYPOINT_INSECURE")
 end)
 
-Waypoint.BASE_URL = ((SPAWNPAD_WAYPOINT_URL_EXISTS and SPAWNPAD_WAYPOINT_URL) or "localhost:3000")
-Waypoint.API_URL = (SPAWNPAD_WAYPOINT_INSECURE_EXISTS and "http://" or "https://") .. Waypoint.BASE_URL
-
-Waypoint.WS_URL = (SPAWNPAD_WAYPOINT_INSECURE_EXISTS and "ws://" or "wss://") .. Waypoint.BASE_URL
+Waypoint.HTTP_URL = Config.HTTP_URL
+Waypoint.WS_URL = Config.WS_URL
 
 DataTypeLoader:LoadDataTypes()
 
@@ -23,7 +22,7 @@ function Waypoint.new(userId: number)
 
 	local tokenSuccess, token = pcall(function()
 		return HttpService:RequestAsync({
-			Url = Waypoint.API_URL .. "/api/v1/auth/roblox",
+			Url = Waypoint.HTTP_URL .. "/api/v1/auth/roblox",
 			Method = "POST",
 			Headers = {
 				["Content-Type"] = "application/json",
@@ -45,12 +44,20 @@ function Waypoint.new(userId: number)
 
 	self.wsError = false
 
-	self.ws = HttpService:CreateWebStreamClient(Enum.WebStreamClientType.WebSocket, {
-		Url = Waypoint.WS_URL .. "/api/v1/ws/ws",
-		Headers = {
-			["Authorization"] = "Bearer " .. self.token,
-		},
-	})
+	if not self.token then
+        warn("Token is nil, cannot connect to WebSocket")
+        return
+	end
+
+	self.ws = HttpService:CreateWebStreamClient(
+		Enum.WebStreamClientType.WebSocket,
+		{
+			Url = Waypoint.WS_URL .. "/api/v1/ws/ws",
+			Headers = {
+				Authorization = "Bearer " .. self.token,
+			},
+		}
+	)
 
 	self.ws.Opened:Connect(function()
 		-- wait 3 seconds before sending whoami because of server-side checks
@@ -60,8 +67,6 @@ function Waypoint.new(userId: number)
 				type = "whoami",
 			}))
 		end)
-
-		print(success)
 	end)
 
 	self.ws.Error:Connect(function(code: number, message: string)
