@@ -14,7 +14,12 @@ export async function loadApiRoutes() {
             if (!route.isDirectory()) continue;
 
             const routePath = pathToFileURL(
-                path.join(import.meta.dirname, "../services", route.name, "index.js"),
+                path.join(
+                    import.meta.dirname,
+                    "../services",
+                    route.name,
+                    "index.js",
+                ),
             ).href;
 
             try {

@@ -4,13 +4,6 @@ local Config = require("./Waypoint/Config")
 local Waypoint = {}
 Waypoint.__index = Waypoint
 
-local SPAWNPAD_WAYPOINT_URL_EXISTS, SPAWNPAD_WAYPOINT_URL = pcall(function()
-	return HttpService:GetSecret("SPAWNPAD_WAYPOINT_URL")
-end)
-local SPAWNPAD_WAYPOINT_INSECURE_EXISTS = pcall(function()
-	return HttpService:GetSecret("SPAWNPAD_WAYPOINT_INSECURE")
-end)
-
 Waypoint.HTTP_URL = Config.HTTP_URL
 Waypoint.WS_URL = Config.WS_URL
 
@@ -45,24 +38,21 @@ function Waypoint.new(userId: number)
 	self.wsError = false
 
 	if not self.token then
-        warn("Token is nil, cannot connect to WebSocket")
-        return
+		warn("Token is nil, cannot connect to WebSocket")
+		return
 	end
 
-	self.ws = HttpService:CreateWebStreamClient(
-		Enum.WebStreamClientType.WebSocket,
-		{
-			Url = Waypoint.WS_URL .. "/api/v1/ws/ws",
-			Headers = {
-				Authorization = "Bearer " .. self.token,
-			},
-		}
-	)
+	self.ws = HttpService:CreateWebStreamClient(Enum.WebStreamClientType.WebSocket, {
+		Url = Waypoint.WS_URL .. "/api/v1/ws/ws",
+		Headers = {
+			Authorization = "Bearer " .. self.token,
+		},
+	})
 
 	self.ws.Opened:Connect(function()
 		-- wait 3 seconds before sending whoami because of server-side checks
 		task.wait(3)
-		local success = pcall(function()
+		local _success = pcall(function()
 			return self.ws:Send(HttpService:JSONEncode({
 				type = "whoami",
 			}))
