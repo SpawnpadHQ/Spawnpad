@@ -71,21 +71,19 @@ async function loadDatatypes() {
         const datatypes = await fs.readdir(
             path.join(import.meta.dirname, "./datatypes"),
         );
-        datatypes.forEach(async (route) => {
-            let datatypePath = path.join(
-                import.meta.dirname,
-                "./datatypes",
-                route,
-            );
+        for (const route of datatypes) {
+            if (!route.endsWith(".js")) continue;
 
-            datatypePath = pathToFileURL(datatypePath).href;
+            const datatypePath = pathToFileURL(
+                path.join(import.meta.dirname, "./datatypes", route),
+            ).href;
 
             try {
                 await import(datatypePath);
             } catch (error) {
                 throw new Error(`Failed to load datatype ${route}: ${error}`);
             }
-        });
+        }
     } catch (error) {
         throw new Error(`Failed to load datatypes: ${error}`);
     }

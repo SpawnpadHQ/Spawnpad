@@ -8,15 +8,14 @@ export async function loadApiRoutes() {
     try {
         const routes = await fs.readdir(
             path.join(import.meta.dirname, "../services"),
+            { withFileTypes: true },
         );
         for (const route of routes) {
-            let routePath = path.join(
-                import.meta.dirname,
-                "../services",
-                route,
-            );
+            if (!route.isDirectory()) continue;
 
-            routePath = pathToFileURL(routePath).href;
+            const routePath = pathToFileURL(
+                path.join(import.meta.dirname, "../services", route.name, "index.js"),
+            ).href;
 
             try {
                 const { default: routeModule } = await import(routePath);
@@ -28,7 +27,7 @@ export async function loadApiRoutes() {
                     });
                 }
             } catch (error) {
-                throw new Error(`Failed to load route ${route}: ${error}`);
+                throw new Error(`Failed to load route ${route.name}: ${error}`);
             }
         }
     } catch (error) {
