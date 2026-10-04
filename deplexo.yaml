@@ -1,0 +1,5 @@
+framework: node
+install: corepack enable && pnpm install --frozen-lockfile
+build: pnpm -F waypoint build
+start: pnpm -F waypoint start
+port: 3000
