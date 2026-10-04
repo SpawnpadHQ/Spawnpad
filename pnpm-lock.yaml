@@ -35,6 +35,9 @@ importers:
       pg:
         specifier: ^8.23.0
         version: 8.23.0
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
       ulid:
         specifier: ^3.0.2
         version: 3.0.2
@@ -1129,6 +1132,11 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
+  typescript@6.0.3:
+    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   ulid@3.0.2:
     resolution: {integrity: sha512-yu26mwteFYzBAot7KVMqFGCVpsF6g8wXfJzQUHvu1no3+rRRSFcSV2nKeYvNPLD2J4b08jYBDhHUjeH0ygIl9w==}
     hasBin: true
@@ -2023,6 +2031,8 @@ snapshots:
       esbuild: 0.28.2
     optionalDependencies:
       fsevents: 2.3.3
+
+  typescript@6.0.3: {}
 
   ulid@3.0.2: {}
 
